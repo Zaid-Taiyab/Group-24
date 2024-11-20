@@ -90,6 +90,9 @@ public class Main extends Application {
         if (asurite.equals("123456") && password.equals("admin")) {
             AdminPage adminPage = new AdminPage();  // Create an instance of AdminPage
             adminPage.start(stage);  // Launch Admin Page
+        } else if (asurite.equals("654321") && password.equals("seller")) {
+            SellerPage sellerPage = new SellerPage();
+            sellerPage.start(stage);
         } else {
             loginError(Alert.AlertType.ERROR, "Login Failed", "Incorrect ASU ID or password.");
         }
