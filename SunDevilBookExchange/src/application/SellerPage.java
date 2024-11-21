@@ -36,6 +36,19 @@ public class SellerPage {
         logoutButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white; -fx-border-radius: 10px; -fx-background-radius: 10px;");
         logoutButton.setOnAction(e -> goToLoginPage(stage));
 
+        
+        // listings button
+        Button viewListingsButton = new Button("View Listings");
+        viewListingsButton.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        viewListingsButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white; -fx-border-radius: 8px; -fx-background-radius: 8px;");
+        viewListingsButton.setOnAction(e -> {
+            Listings listingsPage = new Listings();
+            listingsPage.start(stage); 
+        });
+        StackPane.setAlignment(viewListingsButton, Pos.TOP_LEFT);
+        StackPane.setMargin(viewListingsButton, new Insets(10, 0, 0, 10)); 
+        headerPane.getChildren().add(viewListingsButton);
+
         // Book Fields
         TextField bookTitle = new TextField();
         TextField author = new TextField();
@@ -49,9 +62,12 @@ public class SellerPage {
         Button generatePrice = new Button("Generate Price");
         Button listBook = new Button("List My Book");
 
-        // Add hover effect to the logout button
+        // Add hover effect to the logout button and listings
         logoutButton.setOnMouseEntered(e -> logoutButton.setStyle("-fx-background-color: #cc0000; -fx-text-fill: white; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
         logoutButton.setOnMouseExited(e -> logoutButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
+
+        viewListingsButton.setOnMouseEntered(e -> viewListingsButton.setStyle("-fx-background-color: #cc0000; -fx-text-fill: white; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
+        viewListingsButton.setOnMouseExited(e -> viewListingsButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
 
         // Add a spacer before the logout button to keep it at the bottom
         VBox spacer = new VBox();
