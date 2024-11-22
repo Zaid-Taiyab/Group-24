@@ -4,11 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -18,11 +14,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+public class Main extends Application {
+	
     public void start(Stage primaryStage) {
         // Login page setup
-        Image logoImage = new Image("Assets/logo.png"); 
+    	Image logoImage = new Image(getClass().getResource("/Assets/logo.png").toExternalForm());
         ImageView logoImageView = new ImageView(logoImage);
         logoImageView.setFitWidth(200); 
         logoImageView.setPreserveRatio(true);
@@ -45,11 +45,19 @@ public class Main extends Application {
         loginButton.setPrefWidth(300);
         loginButton.setStyle("-fx-background-color: grey; -fx-text-fill: black;");
         loginButton.setDisable(true);
+        
+        Button createAccountButton = new Button("Create Account");
+        createAccountButton.setPrefWidth(300);
+        createAccountButton.setStyle("-fx-background-color: #F5DEB3; -fx-text-fill: black;");
 
         asuriteField.textProperty().addListener((observable, oldValue, newValue) -> backgroundAdjust(asuriteField, passwordField, loginButton));
         passwordField.textProperty().addListener((observable, oldValue, newValue) -> backgroundAdjust(asuriteField, passwordField, loginButton));
 
         loginButton.setOnAction(e -> login(asuriteField, passwordField, primaryStage));
+        createAccountButton.setOnAction(e -> {
+        	UserAccount userAccount = new UserAccount();
+        	userAccount.start(primaryStage);
+        });
 
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
@@ -61,6 +69,7 @@ public class Main extends Application {
         gridPane.add(passwordLabel, 0, 1);
         gridPane.add(passwordField, 1, 1);
         gridPane.add(loginButton, 1, 2);
+        gridPane.add(createAccountButton, 1, 3);
 
         VBox background = new VBox(30, logoImageView, headerLabel, gridPane);
         background.setAlignment(Pos.TOP_CENTER);
@@ -84,17 +93,74 @@ public class Main extends Application {
     }
 
     private void login(TextField asuriteField, PasswordField passwordField, Stage stage) {
-        String asurite = asuriteField.getText();
-        String password = passwordField.getText();
+    	String asurite = asuriteField.getText();
+    	String password = passwordField.getText();
 
-        if (asurite.equals("123456") && password.equals("admin")) {
-            AdminPage adminPage = new AdminPage();  // Create an instance of AdminPage
-            adminPage.start(stage);  // Launch Admin Page
-        } else if (asurite.equals("654321") && password.equals("seller")) {
+    	if (Files.exists(Paths.get("accounts.txt"))) {
+    		try {
+    			boolean validUser = false;
+    			String roles = null;
+
+    			// Read and validate credentials
+    			for (String line : Files.readAllLines(Paths.get("accounts.txt"))) {
+    				String[] parts = line.split(",");
+    				if (parts.length >= 3 && parts[0].equals(asurite) && parts[1].equals(password)) {
+    					validUser = true;
+    					roles = parts[2];
+    					break;
+    				}
+    			}
+
+    			if (validUser) {
+    				promptUserRole(stage, roles);
+    				return;
+    			}
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+    	}
+    	loginError(Alert.AlertType.ERROR, "Login Failed", "Incorrect ASU ID or password.");
+    }
+    
+    private void promptUserRole(Stage stage, String roles) {
+        String[] roleOptions = roles.split(" ");
+        if (roleOptions.length == 1) {
+            handleRoleNavigation(stage, roleOptions[0]);
+        } else {
+            // Create a choice dialog for role selection
+            ChoiceDialog<String> roleDialog = new ChoiceDialog<>(roleOptions[0], roleOptions);
+            roleDialog.setTitle("Select Role");
+            roleDialog.setHeaderText("Multiple Roles Detected");
+            roleDialog.setContentText("Choose your role for this session:");
+            
+            // Apply custom styling to the dialog
+            DialogPane dialogPane = roleDialog.getDialogPane();
+            dialogPane.setStyle("-fx-background-color: #801f33; -fx-text-fill: white;");
+            
+            // Customize text and content
+            dialogPane.getContent().setStyle("-fx-text-fill: white;");
+            dialogPane.lookup(".header-panel").setStyle("-fx-background-color: #801f33; -fx-text-fill: white;");
+
+            roleDialog.showAndWait().ifPresent(selectedRole -> handleRoleNavigation(stage, selectedRole));
+        }
+    }
+    
+    private void handleRoleNavigation(Stage stage, String roles) {
+        if (roles == null) return;
+
+        // Navigate based on roles
+        if (roles.contains("Admin")) {
+            AdminPage adminPage = new AdminPage();
+            adminPage.start(stage);
+        } else if (roles.contains("Seller")) {
             SellerPage sellerPage = new SellerPage();
             sellerPage.start(stage);
+        } else if (roles.contains("Buyer")) {
+            Buyers buyerPage = new Buyers();
+            buyerPage.start(stage);
         } else {
-            loginError(Alert.AlertType.ERROR, "Login Failed", "Incorrect ASU ID or password.");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "No valid role found for this account.");
+            alert.showAndWait();
         }
     }
 
