@@ -19,19 +19,19 @@ public class UserAccount {
         Stage createAccountStage = new Stage();
         createAccountStage.setTitle("Create Account");
 
-        // Header label
+        //label
         Label headerLabel = new Label("Create an Account");
         headerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         headerLabel.setTextFill(Color.WHITE);
 
-        // Text fields for ASU ID and password
+        //text field
         TextField asuriteField = new TextField();
         asuriteField.setPromptText("Enter your ASU ID");
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Enter your Password");
 
-        // Checkboxes for roles
+        //checkbox
         CheckBox adminCheckBox = new CheckBox("Admin");
         adminCheckBox.setStyle("-fx-text-fill: white;");
         CheckBox buyerCheckBox = new CheckBox("Buyer");
@@ -39,12 +39,12 @@ public class UserAccount {
         CheckBox sellerCheckBox = new CheckBox("Seller");
         sellerCheckBox.setStyle("-fx-text-fill: white;");
 
-        // Button to save the account
+        //save button and action
         Button saveButton = new Button("Create Account");
         saveButton.setStyle("-fx-background-color: #F5DEB3; -fx-text-fill: black;");
         saveButton.setOnAction(e -> saveAccount(asuriteField, passwordField, adminCheckBox, buyerCheckBox, sellerCheckBox, createAccountStage));
 
-        // Layout for the scene
+        //layout
         VBox layout = new VBox(20, headerLabel, asuriteField, passwordField, adminCheckBox, buyerCheckBox, sellerCheckBox, saveButton);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(20));
@@ -54,36 +54,38 @@ public class UserAccount {
         createAccountStage.setScene(createAccountScene);
         createAccountStage.show();
     }
-
+    
+    //function to save account in a file
     private void saveAccount(TextField asuriteField, PasswordField passwordField, CheckBox adminCheckBox, CheckBox buyerCheckBox, CheckBox sellerCheckBox, Stage createAccountStage) {
         String asurite = asuriteField.getText();
         String password = passwordField.getText();
 
-        // Ensure ASU ID and password are not empty
+        //make sure ASU ID and password are not empty
         if (asurite.isEmpty() || password.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Both fields are required.");
             alert.showAndWait();
             return;
         }
 
-        // Determine selected roles
+        //choose roles for account
         StringBuilder roles = new StringBuilder();
         if (adminCheckBox.isSelected()) roles.append("Admin ");
         if (buyerCheckBox.isSelected()) roles.append("Buyer ");
         if (sellerCheckBox.isSelected()) roles.append("Seller");
-
+        
+        //at least 1 role must be selected
         if (roles.toString().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "At least one role must be selected.");
             alert.showAndWait();
             return;
         }
 
-        // Save credentials and roles to "accounts.txt"
+        //save data to accounts.txt file and close it
         try (FileWriter writer = new FileWriter("accounts.txt", true)) {
             writer.write(asurite + "," + password + "," + roles.toString().trim() + "\n");
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Account Created Successfully!");
             alert.showAndWait();
-            createAccountStage.close();  // Close the create account window after saving
+            createAccountStage.close();
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to save account. Please try again.");
             alert.showAndWait();

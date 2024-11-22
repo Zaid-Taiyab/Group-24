@@ -46,6 +46,7 @@ public class Main extends Application {
         loginButton.setStyle("-fx-background-color: grey; -fx-text-fill: black;");
         loginButton.setDisable(true);
         
+        //button to create account
         Button createAccountButton = new Button("Create Account");
         createAccountButton.setPrefWidth(300);
         createAccountButton.setStyle("-fx-background-color: #F5DEB3; -fx-text-fill: black;");
@@ -54,6 +55,7 @@ public class Main extends Application {
         passwordField.textProperty().addListener((observable, oldValue, newValue) -> backgroundAdjust(asuriteField, passwordField, loginButton));
 
         loginButton.setOnAction(e -> login(asuriteField, passwordField, primaryStage));
+        //action for create account
         createAccountButton.setOnAction(e -> {
         	UserAccount userAccount = new UserAccount();
         	userAccount.start(primaryStage);
@@ -91,17 +93,17 @@ public class Main extends Application {
             loginButton.setStyle("-fx-background-color: #F5DEB3; -fx-text-fill: black;");
         }
     }
-
+    
     private void login(TextField asuriteField, PasswordField passwordField, Stage stage) {
     	String asurite = asuriteField.getText();
     	String password = passwordField.getText();
-
+    	//search for account.txt file
     	if (Files.exists(Paths.get("accounts.txt"))) {
     		try {
     			boolean validUser = false;
     			String roles = null;
 
-    			// Read and validate credentials
+    			//read and parse the file
     			for (String line : Files.readAllLines(Paths.get("accounts.txt"))) {
     				String[] parts = line.split(",");
     				if (parts.length >= 3 && parts[0].equals(asurite) && parts[1].equals(password)) {
@@ -110,7 +112,7 @@ public class Main extends Application {
     					break;
     				}
     			}
-
+    			//if found, calls prompt user role
     			if (validUser) {
     				promptUserRole(stage, roles);
     				return;
@@ -121,34 +123,32 @@ public class Main extends Application {
     	}
     	loginError(Alert.AlertType.ERROR, "Login Failed", "Incorrect ASU ID or password.");
     }
-    
+    //function to choose role to log in to 
     private void promptUserRole(Stage stage, String roles) {
         String[] roleOptions = roles.split(" ");
         if (roleOptions.length == 1) {
             handleRoleNavigation(stage, roleOptions[0]);
         } else {
-            // Create a choice dialog for role selection
+            //choice dialog for role selection
             ChoiceDialog<String> roleDialog = new ChoiceDialog<>(roleOptions[0], roleOptions);
             roleDialog.setTitle("Select Role");
             roleDialog.setHeaderText("Multiple Roles Detected");
             roleDialog.setContentText("Choose your role for this session:");
             
-            // Apply custom styling to the dialog
+            //change design of choice dialog
             DialogPane dialogPane = roleDialog.getDialogPane();
             dialogPane.setStyle("-fx-background-color: #801f33; -fx-text-fill: white;");
-            
-            // Customize text and content
             dialogPane.getContent().setStyle("-fx-text-fill: white;");
             dialogPane.lookup(".header-panel").setStyle("-fx-background-color: #801f33; -fx-text-fill: white;");
-
+            //calls the handle roll navigation to handle the role selected
             roleDialog.showAndWait().ifPresent(selectedRole -> handleRoleNavigation(stage, selectedRole));
         }
     }
-    
+    //function to handle role selected
     private void handleRoleNavigation(Stage stage, String roles) {
         if (roles == null) return;
 
-        // Navigate based on roles
+        //calls different page based on role selected
         if (roles.contains("Admin")) {
             AdminPage adminPage = new AdminPage();
             adminPage.start(stage);
