@@ -12,10 +12,9 @@ import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
+import java.util.stream.Collectors;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-
-import java.util.stream.Collectors;
 
 public class Buyers extends Application {
 
@@ -67,7 +66,7 @@ public class Buyers extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Populate sample books (or load from storage)
+        // Populate books from storage
         populateBooksFromStorage();
     }
 
@@ -75,12 +74,17 @@ public class Buyers extends Application {
         VBox filterBox = new VBox(20);
         filterBox.setPadding(new Insets(20));
         filterBox.setStyle("-fx-background-color: #F5DEB3; -fx-border-color: #ffffff; -fx-border-width: 2px;");
+        filterBox.setAlignment(Pos.TOP_CENTER);
 
         Label filterTitle = new Label("Filters");
         filterTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #801f33;");
 
-        ComboBox<String> categoryComboBox = new ComboBox<>();
-        categoryComboBox.getItems().addAll("All Categories", "Natural Science", "Computer Science", "Math", "English Language", "Other");
+        // Retrieve categories from the Category class
+        String[] categories = Category.getAllValuesAsStrings();
+        ObservableList<String> categoryOptions = FXCollections.observableArrayList();
+        categoryOptions.add("All Categories");
+        categoryOptions.addAll(categories);
+        final ComboBox<String> categoryComboBox = new ComboBox<>(categoryOptions);
         categoryComboBox.setValue("All Categories");
         categoryComboBox.setStyle("-fx-background-color: #f5f5dc;");
 
@@ -92,7 +96,23 @@ public class Buyers extends Application {
         categoryComboBox.setOnAction(event -> filterBooks(categoryComboBox.getValue(), conditionComboBox.getValue()));
         conditionComboBox.setOnAction(event -> filterBooks(categoryComboBox.getValue(), conditionComboBox.getValue()));
 
-        filterBox.getChildren().addAll(filterTitle, new Label("Browse by Category:"), categoryComboBox, new Label("Filter by Condition:"), conditionComboBox);
+        // Create GridPane for labels and ComboBoxes
+        GridPane gridPane = new GridPane();
+        gridPane.setVgap(10);
+        gridPane.setHgap(10);
+        gridPane.setAlignment(Pos.CENTER_LEFT);
+
+        Label categoryLabel = new Label("Browse by Category:");
+        categoryLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #801f33;");
+        Label conditionLabel = new Label("Filter by Condition:");
+        conditionLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #801f33;");
+
+        gridPane.add(categoryLabel, 0, 0);
+        gridPane.add(categoryComboBox, 1, 0);
+        gridPane.add(conditionLabel, 0, 1);
+        gridPane.add(conditionComboBox, 1, 1);
+
+        filterBox.getChildren().addAll(filterTitle, gridPane);
         return filterBox;
     }
 
@@ -100,13 +120,14 @@ public class Buyers extends Application {
         VBox bookDetailsBox = new VBox(10);
         bookDetailsBox.setPadding(new Insets(20));
         bookDetailsBox.setStyle("-fx-background-color: #F5DEB3; -fx-border-color: #ffffff; -fx-border-width: 2px;");
+        bookDetailsBox.setAlignment(Pos.TOP_CENTER);
 
         Label bookListTitle = new Label("Available Books");
         bookListTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #801f33;");
 
         TableView<Book> bookTable = new TableView<>(bookList);
         bookTable.setStyle("-fx-selection-bar: #801f33;");
-        
+
         TableColumn<Book, String> titleCol = new TableColumn<>("Title");
         titleCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
 
@@ -129,6 +150,7 @@ public class Buyers extends Application {
                     cartItems.add(book);
                     updateCartLabel();
                 });
+                addButton.setStyle("-fx-background-color: #F5DEB3; -fx-font-weight: bold; -fx-border-radius: 10px;");
             }
 
             @Override
@@ -139,6 +161,8 @@ public class Buyers extends Application {
         });
 
         bookTable.getColumns().addAll(titleCol, authorCol, conditionCol, priceCol, actionCol);
+        bookTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         bookDetailsBox.getChildren().addAll(bookListTitle, bookTable);
         return bookDetailsBox;
     }
@@ -147,6 +171,7 @@ public class Buyers extends Application {
         VBox cartBox = new VBox(20);
         cartBox.setPadding(new Insets(20));
         cartBox.setStyle("-fx-background-color: #F5DEB3;");
+        cartBox.setAlignment(Pos.TOP_CENTER);
 
         Label cartTitle = new Label("Shopping Cart");
         cartTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #801f33;");
@@ -156,20 +181,25 @@ public class Buyers extends Application {
 
         Button viewCartButton = new Button("View Cart");
         viewCartButton.setOnAction(event -> viewCart());
+        viewCartButton.setStyle("-fx-background-color: #801f33; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 10px;");
 
         Button checkoutButton = new Button("Checkout");
         checkoutButton.setOnAction(event -> checkout());
+        checkoutButton.setStyle("-fx-background-color: #801f33; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 10px;");
 
-        cartBox.getChildren().addAll(cartTitle, cartContentsLabel, viewCartButton, checkoutButton);
+        HBox buttonBox = new HBox(10, viewCartButton, checkoutButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        cartBox.getChildren().addAll(cartTitle, cartContentsLabel, buttonBox);
         return cartBox;
     }
 
     private void filterBooks(String category, String condition) {
         bookList.setAll(bookStorage.getBooks().stream()
                 .filter(book -> ("All Categories".equals(category) || book.getCategory().equals(category)) &&
-                               ("All Conditions".equals(condition) || book.getCondition().equals(condition)))
+                        ("All Conditions".equals(condition) || book.getCondition().equals(condition)))
                 .collect(Collectors.toList())
-);
+        );
     }
 
     private void populateBooksFromStorage() {
@@ -187,6 +217,7 @@ public class Buyers extends Application {
         VBox cartLayout = new VBox(10);
         cartLayout.setPadding(new Insets(20));
         cartLayout.setStyle("-fx-background-color: #F5DEB3;");
+        cartLayout.setAlignment(Pos.TOP_CENTER);
 
         Label cartTitle = new Label("Shopping Cart");
         cartTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #801f33;");
@@ -217,6 +248,7 @@ public class Buyers extends Application {
                     cartItems.remove(book);
                     updateCartLabel(); // Update the cart label
                 });
+                removeButton.setStyle("-fx-background-color: #F5DEB3; -fx-font-weight: bold; -fx-border-radius: 10px;");
             }
 
             @Override
@@ -227,6 +259,7 @@ public class Buyers extends Application {
         });
 
         cartTable.getColumns().addAll(titleCol, authorCol, conditionCol, priceCol, removeCol);
+        cartTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         cartLayout.getChildren().addAll(cartTitle, cartTable);
 
@@ -234,7 +267,6 @@ public class Buyers extends Application {
         cartStage.setScene(scene);
         cartStage.show();
     }
-
 
     private void checkout() {
         if (cartItems.isEmpty()) {
@@ -263,7 +295,6 @@ public class Buyers extends Application {
         }
     }
 
-
     private void navigateToLoginPage(Stage stage) {
         Main mainPage = new Main();
         mainPage.start(stage); // Navigate back to the main login page
@@ -273,5 +304,3 @@ public class Buyers extends Application {
         launch(args);
     }
 }
-
-
