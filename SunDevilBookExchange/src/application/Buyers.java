@@ -11,7 +11,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.cell.PropertyValueFactory;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -52,7 +51,7 @@ public class Buyers extends Application {
         mainLayout.setRight(cartBox);
 
         // Back button to return to login or role selection
-        Button backButton = new Button("Back");
+        Button backButton = new Button("Logout");
         backButton.setOnAction(event -> navigateToLoginPage(primaryStage));
         backButton.setStyle("-fx-background-color: #F5DEB3; -fx-font-weight: bold; -fx-border-radius: 10px;");
 
@@ -227,16 +226,16 @@ public class Buyers extends Application {
 
         // Create table columns
         TableColumn<Book, String> titleCol = new TableColumn<>("Title");
-        titleCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        titleCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
 
         TableColumn<Book, String> authorCol = new TableColumn<>("Author");
-        authorCol.setCellValueFactory(new PropertyValueFactory<>("author"));
+        authorCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAuthor()));
 
         TableColumn<Book, String> conditionCol = new TableColumn<>("Condition");
-        conditionCol.setCellValueFactory(new PropertyValueFactory<>("condition"));
+        conditionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCondition()));
 
         TableColumn<Book, Double> priceCol = new TableColumn<>("Price");
-        priceCol.setCellValueFactory(new PropertyValueFactory<>("salePrice"));
+        priceCol.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getSalePrice()).asObject());
 
         TableColumn<Book, Void> removeCol = new TableColumn<>("Action");
         removeCol.setCellFactory(param -> new TableCell<Book, Void>() {
