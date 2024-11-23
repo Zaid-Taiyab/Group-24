@@ -3,6 +3,7 @@ package application;
 import java.util.Arrays;
 
 public enum Condition {
+	New("New"),
     UsedLikeNew("Used Like New"),
     ModeratelyUsed("Moderately Used"),
     HeavilyUsed("Heavily Used");

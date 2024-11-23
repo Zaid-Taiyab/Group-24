@@ -123,19 +123,19 @@ public class Listings {
         statusValue.setFont(valueFont);
 
         // Set text color to black
-        titleLabel.setTextFill(Color.BLACK);
-        authorLabel.setTextFill(Color.BLACK);
-        categoryLabel.setTextFill(Color.BLACK);
-        conditionLabel.setTextFill(Color.BLACK);
-        priceLabel.setTextFill(Color.BLACK);
-        statusLabel.setTextFill(Color.BLACK);
+        titleLabel.setStyle("-fx-text-fill: black");
+        authorLabel.setStyle("-fx-text-fill: black");
+        categoryLabel.setStyle("-fx-text-fill: black");
+        conditionLabel.setStyle("-fx-text-fill: black");
+        priceLabel.setStyle("-fx-text-fill: black");
+        statusLabel.setStyle("-fx-text-fill: black");
 
-        titleValue.setTextFill(Color.BLACK);
-        authorValue.setTextFill(Color.BLACK);
-        categoryValue.setTextFill(Color.BLACK);
-        conditionValue.setTextFill(Color.BLACK);
-        priceValue.setTextFill(Color.BLACK);
-        statusValue.setTextFill(Color.BLACK);
+        titleValue.setStyle("-fx-text-fill: black");
+        authorValue.setStyle("-fx-text-fill: black");
+        categoryValue.setStyle("-fx-text-fill: black");
+        conditionValue.setStyle("-fx-text-fill: black");
+        priceValue.setStyle("-fx-text-fill: black");
+        statusValue.setStyle("-fx-text-fill: black");
 
         // Add labels and values to GridPane
         bookInfoGrid.add(titleLabel, 0, 0);
