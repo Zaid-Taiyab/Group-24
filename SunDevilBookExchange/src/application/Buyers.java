@@ -1,5 +1,4 @@
-// Integration of Buyers Page with the rest of the application
-
+// This is the code for the buyers page
 package application;
 
 import javafx.application.Application;
