@@ -140,7 +140,7 @@ public class Buyers extends Application {
         Button clearCartButton = new Button("Clear Cart");
         styleCartButton(viewCartButton);
         styleCartButton(checkoutButton);
-        styleCartButton(clearCartButton)
+        styleCartButton(clearCartButton);
         viewCartButton.setOnAction(event -> viewCart());
         checkoutButton.setOnAction(event -> checkout());
         clearCartButton.setOnAction(event -> clearCart());
