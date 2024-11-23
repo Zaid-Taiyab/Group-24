@@ -12,8 +12,10 @@ import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
-import java.util.stream.Collectors;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
+import java.util.stream.Collectors;
 
 public class Buyers extends Application {
 
@@ -106,16 +108,16 @@ public class Buyers extends Application {
         bookTable.setStyle("-fx-selection-bar: #801f33;");
         
         TableColumn<Book, String> titleCol = new TableColumn<>("Title");
-        titleCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        titleCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
 
         TableColumn<Book, String> authorCol = new TableColumn<>("Author");
-        authorCol.setCellValueFactory(new PropertyValueFactory<>("author"));
+        authorCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAuthor()));
 
         TableColumn<Book, String> conditionCol = new TableColumn<>("Condition");
-        conditionCol.setCellValueFactory(new PropertyValueFactory<>("condition"));
+        conditionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCondition()));
 
         TableColumn<Book, Double> priceCol = new TableColumn<>("Price");
-        priceCol.setCellValueFactory(new PropertyValueFactory<>("salePrice"));
+        priceCol.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getSalePrice()).asObject());
 
         TableColumn<Book, Void> actionCol = new TableColumn<>("Action");
         actionCol.setCellFactory(param -> new TableCell<Book, Void>() {
