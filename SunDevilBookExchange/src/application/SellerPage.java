@@ -33,14 +33,13 @@ public class SellerPage {
         Button logoutButton = new Button("Logout");
         logoutButton.setPrefWidth(200);
         logoutButton.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        logoutButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white; -fx-border-radius: 10px; -fx-background-radius: 10px;");
+        logoutButton.setStyle("-fx-background-color: #F5DEB3; -fx-text-fill: black; -fx-border-radius: 10px; -fx-background-radius: 10px;");
         logoutButton.setOnAction(e -> goToLoginPage(stage));
 
-        
-        // listings button
+        // Listings Button
         Button viewListingsButton = new Button("View Listings");
         viewListingsButton.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-        viewListingsButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white; -fx-border-radius: 8px; -fx-background-radius: 8px;");
+        viewListingsButton.setStyle("-fx-background-color: #F5DEB3; -fx-text-fill: black; -fx-border-radius: 8px; -fx-background-radius: 8px;");
         viewListingsButton.setOnAction(e -> {
             Listings listingsPage = new Listings();
             listingsPage.start(stage); 
@@ -53,21 +52,21 @@ public class SellerPage {
         TextField bookTitle = new TextField();
         TextField author = new TextField();
         String[] categories = Category.getAllValuesAsStrings();
-        final ComboBox categoryList = new ComboBox(FXCollections.observableArrayList(categories));
+        final ComboBox<String> categoryList = new ComboBox<>(FXCollections.observableArrayList(categories));
         String[] conditions = Condition.getAllValuesAsStrings();
-        final ComboBox conditionList = new ComboBox(FXCollections.observableArrayList(conditions));
+        final ComboBox<String> conditionList = new ComboBox<>(FXCollections.observableArrayList(conditions));
         TextField originalPrice = new TextField();
         TextField sellPrice = new TextField();
         sellPrice.setDisable(true);
         Button generatePrice = new Button("Generate Price");
         Button listBook = new Button("List My Book");
 
-        // Add hover effect to the logout button and listings
-        logoutButton.setOnMouseEntered(e -> logoutButton.setStyle("-fx-background-color: #cc0000; -fx-text-fill: white; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
-        logoutButton.setOnMouseExited(e -> logoutButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
+        // Add hover effect to the logout button and listings button
+        logoutButton.setOnMouseEntered(e -> logoutButton.setStyle("-fx-background-color: #e6cfa5; -fx-text-fill: black; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
+        logoutButton.setOnMouseExited(e -> logoutButton.setStyle("-fx-background-color: #F5DEB3; -fx-text-fill: black; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
 
-        viewListingsButton.setOnMouseEntered(e -> viewListingsButton.setStyle("-fx-background-color: #cc0000; -fx-text-fill: white; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
-        viewListingsButton.setOnMouseExited(e -> viewListingsButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white; -fx-border-radius: 10px; -fx-background-radius: 10px;"));
+        viewListingsButton.setOnMouseEntered(e -> viewListingsButton.setStyle("-fx-background-color: #e6cfa5; -fx-text-fill: black; -fx-border-radius: 8px; -fx-background-radius: 8px;"));
+        viewListingsButton.setOnMouseExited(e -> viewListingsButton.setStyle("-fx-background-color: #F5DEB3; -fx-text-fill: black; -fx-border-radius: 8px; -fx-background-radius: 8px;"));
 
         // Add a spacer before the logout button to keep it at the bottom
         VBox spacer = new VBox();
@@ -75,15 +74,57 @@ public class SellerPage {
         sidebar.getChildren().add(spacer);
         sidebar.getChildren().add(logoutButton);
 
-        VBox mainContent = new VBox(20,
-                new HBox(new Label("Book Title: "), bookTitle),
-                new HBox(new Label("Author: "), author),
-                new HBox(new Label("Category: "), categoryList),
-                new HBox(new Label("Condition: "), conditionList),
-                new HBox(new Label("Original Price: "), originalPrice),
-                new HBox(new Label("Sale Price: "), sellPrice),
-                new HBox(generatePrice, listBook)
-        );
+        // Form Layout using GridPane for alignment
+        GridPane formGrid = new GridPane();
+        formGrid.setPadding(new Insets(15));
+        formGrid.setVgap(10);
+        formGrid.setHgap(10);
+        formGrid.setStyle("-fx-background-color: #F5DEB3;");
+        formGrid.setAlignment(Pos.CENTER);
+
+        // Labels with consistent width
+        Label titleLabel = new Label("Book Title:");
+        Label authorLabel = new Label("Author:");
+        Label categoryLabel = new Label("Category:");
+        Label conditionLabel = new Label("Condition:");
+        Label originalPriceLabel = new Label("Original Price:");
+        Label sellPriceLabel = new Label("Sale Price:");
+
+        // Set labels to have the same alignment and size
+        titleLabel.setMinWidth(100);
+        authorLabel.setMinWidth(100);
+        categoryLabel.setMinWidth(100);
+        conditionLabel.setMinWidth(100);
+        originalPriceLabel.setMinWidth(100);
+        sellPriceLabel.setMinWidth(100);
+        titleLabel.setAlignment(Pos.CENTER_RIGHT);
+        authorLabel.setAlignment(Pos.CENTER_RIGHT);
+        categoryLabel.setAlignment(Pos.CENTER_RIGHT);
+        conditionLabel.setAlignment(Pos.CENTER_RIGHT);
+        originalPriceLabel.setAlignment(Pos.CENTER_RIGHT);
+        sellPriceLabel.setAlignment(Pos.CENTER_RIGHT);
+
+        // Add elements to the GridPane
+        formGrid.add(titleLabel, 0, 0);
+        formGrid.add(bookTitle, 1, 0);
+        formGrid.add(authorLabel, 0, 1);
+        formGrid.add(author, 1, 1);
+        formGrid.add(categoryLabel, 0, 2);
+        formGrid.add(categoryList, 1, 2);
+        formGrid.add(conditionLabel, 0, 3);
+        formGrid.add(conditionList, 1, 3);
+        formGrid.add(originalPriceLabel, 0, 4);
+        formGrid.add(originalPrice, 1, 4);
+        formGrid.add(sellPriceLabel, 0, 5);
+        formGrid.add(sellPrice, 1, 5);
+
+        // Buttons HBox
+        HBox buttonBox = new HBox(10, generatePrice, listBook);
+        buttonBox.setAlignment(Pos.CENTER);
+        formGrid.add(buttonBox, 0, 6, 2, 1); // Span across two columns
+
+        // Main Content VBox
+        VBox mainContent = new VBox(formGrid);
         mainContent.setPadding(new Insets(15));
         mainContent.setStyle("-fx-background-color: #F5DEB3;");
 
@@ -158,7 +199,7 @@ public class SellerPage {
         });
     }
 
-    private void enableDisableButtons(TextField bookTitle, TextField author, ComboBox categoryList, ComboBox conditionList, TextField originalPrice, TextField sellPrice, Button generatePrice, Button listBook) {
+    private void enableDisableButtons(TextField bookTitle, TextField author, ComboBox<String> categoryList, ComboBox<String> conditionList, TextField originalPrice, TextField sellPrice, Button generatePrice, Button listBook) {
         // Enable/Disable Generate Price Button
         boolean isGeneratePriceEnabled = !bookTitle.getText().isEmpty() && !author.getText().isEmpty() && categoryList.getValue() != null && conditionList.getValue() != null && !originalPrice.getText().isEmpty() && isValidDouble(originalPrice.getText());
         generatePrice.setDisable(!isGeneratePriceEnabled);
